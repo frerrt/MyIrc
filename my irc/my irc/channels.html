@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channels</title>
+</head>
+<body>
+  <form id="form" action="/channels" method="post">
+    <input type="text" id="new-channel-input" placeholder="Nouveau canal">
+    <button type="submit" id="new-channel-btn">Créer un nouveau canal</button>
+  </form>
+    <label for="pet-select">Canaux existants:</label>
+
+    <ul id="channel-list">
+      <!-- La liste des canaux sera ajoutée ici dynamiquement -->
+  </ul>
+
+<select name="pets" id="pet-select">
+  <option value="">--Choose a channel--</option>
+  <option value="dog">Dog</option>
+  <option value="cat">Cat</option>
+ 
+</select>
+
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <script>
+      const socket = io();
+            
+      // console.log(socket);
+    //   const input = document.getElementById('input');
+
+      document.addEventListener('DOMContentLoaded', function() {
+            let newChannelInput = document.getElementById('new-channel-input');
+            let newChannelBtn = document.getElementById('new-channel-btn');
+
+            let channelList = document.getElementById('channel-list');
+            
+            newChannelBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+                // if(input.value) {
+                //     socket.emit('chat message', input.value);
+                   
+                let newChannel = newChannelInput.value;
+                if (newChannel.length > 0) {
+                    console.log(newChannel.length);
+                    socket.emit('new channel', newChannel);
+                    document.getElementById('new-channel-input').value = "";
+                    window.location.href = "./channelChat.html?channel=" + encodeURIComponent(newChannel);
+                    // newChannelInput.value = "";
+                    // console.log(newChannel);
+                
+                }
+                // })
+            });
+    });
+    
+    socket.on('new channel', (newChannel) => {
+        console.log('New channel has been created: ');
+        console.log(newChannel);
+        let listItem = document.createElement('li');
+                listItem.textContent = newChannel;
+                channelList.appendChild(listItem);
+    });
+    </script>
+</body>
+</html>
